@@ -93,7 +93,14 @@ def eye_detection(video_path, frames_to_process):
         # saving only those image that have open eyes
 
         if status == "Open":
-            cv2.imwrite(f"{directory_name}/{str(frame_number)}.jpg", frame)
+            os.chdir(directory_name)
+            path = f"{str(frame_number)}.jpg"
+            print(path)
+            write_success = cv2.imwrite(path, frame)
+            os.chdir("../")
+            if not write_success:
+                print(f"Failed to write image to: {path}")
+            
 
         if (cv2.waitKey(30) == 27):
             break

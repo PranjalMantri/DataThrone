@@ -9,7 +9,7 @@ predictor = dlib.shape_predictor('src/model/shape_predictor_68_face_landmarks.da
 frame_number = 1
 
 directory = "public/eye_detection_output"
-directory_name = "D:/Studies/Code/Python/Datathrone/public/is_facing_camera_output"
+directory_name = "public/is_facing_camera_output"
 
 if os.path.exists(directory_name):
     for file in os.listdir(directory_name):
@@ -20,20 +20,6 @@ if os.path.exists(directory_name):
 os.mkdir(directory_name)
 
 def detect_gaze(image_path, frame_number):
-    if os.getcwd() == directory_name:
-        print("1st condition before")
-        os.chdir("../eye_detection_output")
-        print("1st condition after")
-    elif os.getcwd() == directory:
-        print("2nd condition")
-    elif os.getcwd() == "D:\Studies\Code\Python\Datathrone":
-        print("3rd condition before")
-        os.chdir("/public/eye_detection_output")
-        print(os.getcwd())
-        print("3rd condition after")
-
-    print(f"First {os.getcwd()}")
-    print(image_path)
     image = cv2.imread(image_path)
 
     if image is None:
@@ -71,14 +57,10 @@ def detect_gaze(image_path, frame_number):
         else:
             look = "No"
             print("Person is not looking at the camera")
-
-    # if look == "Yes":
-    if os.getcwd() != directory:
-        os.chdir(directory_name)
-
-    print(f"Second {os.getcwd()}")
-    cv2.imwrite('Frame' + str(frame_number) + ".jpg" , image)
-    frame_number += 1
+    
+    if look == "Yes":
+        cv2.imwrite('Frame' + str(frame_number) + ".jpg" , image)
+        frame_number += 1
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
