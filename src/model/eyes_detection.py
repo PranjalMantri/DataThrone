@@ -3,7 +3,7 @@ import dlib
 import numpy as np
 import os
 
-directory_name = "D:/Studies/Code/Python/Datathrone/eye_detection_output"
+directory_name = "public/eye_detection_output"
 
 if os.path.exists(directory_name):
     for file in os.listdir(directory_name):
@@ -98,6 +98,6 @@ def eye_detection(video_path, frames_to_process):
         if (cv2.waitKey(30) == 27):
             break
 
-    return True
     cap.release()
     cv2.destroyAllWindows()
+    return True
