@@ -20,7 +20,7 @@ predictor = dlib.shape_predictor("src/model/shape_predictor_68_face_landmarks.da
 def detect_eyes(frame_gray, frame, frame_number):
     faces = detector(frame_gray)
 
-    status = "Unknown"
+    is_eyes_open = "Unknown"
 
     for face in faces:
         landmarks = predictor(frame_gray, face)
@@ -43,18 +43,17 @@ def detect_eyes(frame_gray, frame, frame_number):
         ear = (left_ear + right_ear) / 2
 
         # Decrease this to increase accuracy (from what I tested 0.5 - 0.7 works best)
-        # closed_ear_thresh = 0.59
-        closed_ear_thresh = 0.55
+        closed_ear_thresh = 0.65
 
         if ear < closed_ear_thresh:
-            status = "Closed"
+            is_eyes_open = "Closed"
             # cv2.putText(frame, 'Closed', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         else:
-            status = "Open"
+            is_eyes_open = "Open"
             # cv2.putText(frame, 'Open', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-    print(f"{frame_number} + {status}")
-    return frame, status
+    print(f"{frame_number} + {is_eyes_open}")
+    return frame, is_eyes_open
 
 def eye_aspect_ratio(eye_points):
     # calculating vertical distance helps to understand whether eye is open or not
@@ -69,10 +68,10 @@ def eye_aspect_ratio(eye_points):
     return ear
 
 # change the video path
-def eye_detection(video_path, frames_to_process):
+def eye_detection(video_path):
     cap = cv2.VideoCapture(video_path)
     frame_count = 0
-    skip_ratio = 30 // frames_to_process
+    # skip_ratio = 30 // frames_to_process
     frame_number = 0
 
     while True:
@@ -85,20 +84,18 @@ def eye_detection(video_path, frames_to_process):
         frame_number += 1
 
         # taking 1 frame from 30 frames for now(adjust based on video length)
-        if frame_count % skip_ratio != 0:
-            continue 
+        # if frame_count % skip_ratio != 0:
+        #     continue 
 
         frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frame, status = detect_eyes(frame_gray, frame, frame_number)
+        frame, is_eye_open = detect_eyes(frame_gray, frame, frame_number)
 
         # saving only those image that have open eyes
-
-        if status == "Open":
+        if is_eye_open == "Open":
             path = f"{str(frame_number)}.jpg"
             os.chdir(directory_name)
             write_success = cv2.imwrite(path, frame)
             os.chdir("../../")
-            print(os.getcwd())
             
         if (cv2.waitKey(30) == 27):
             break
@@ -107,5 +104,4 @@ def eye_detection(video_path, frames_to_process):
     cv2.destroyAllWindows()
     return True
 
-
-eye_detection("public/youtube_video/I ruined everything.mp4", frames_to_process=5)
+# eye_detection("public/Demo Videos/dance1.webm")

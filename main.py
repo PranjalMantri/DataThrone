@@ -1,23 +1,22 @@
-from src.model.youtube import download
 from src.model.eyes_detection import eye_detection
-
-# https://youtube.com/shorts/mMk7LZ6jRp0?si=nT0mt-B9fdc-lmvO
-
-link = input("Enter a youtube link: ")
-
-if download(link):
-    download_success, downloaded_video = download(link)
-    print(download_success)
-    print(downloaded_video)
-else:
-    print("Could not download the video")
-    quit()
+from src.model.pose_estimation import detect_gaze
+import os
 
 
-frames_to_process_per_second = 1
+def get_best_photo(video_path):
+    eye_detection_success = eye_detection(video_path)
 
-eye_detection_success = eye_detection(downloaded_video, frames_to_process_per_second)
+    if not eye_detection_success:
+        print("Something went wrong while analysing user eyes")
+        return False
 
-if not eye_detection_success:
-    print("Something went wrong while analysing user eyes")
+    eyes_image_directory = "public/eye_detection_output"
+    eyes_images = os.listdir(eyes_image_directory)
 
+    frame_number = 1
+    for image in eyes_images:
+        detect_gaze(image, frame_number)
+
+    return True
+
+get_best_photo("public/Demo Videos/dance1.webm")

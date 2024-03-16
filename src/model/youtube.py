@@ -4,13 +4,13 @@ import os
 video_directory = "public/youtube_video"
 
 def prepare_directory(directory):
-    print("Checking if directory exists")
     if not os.path.exists(directory):
         print("Creating directory")
         os.makedirs(directory)
     else:
         print("Directory already exists, deleting existing files")
         files = os.listdir(directory)
+        print(files)
         for file in files:
             file_path = os.path.join(directory, file)
             os.remove(file_path)

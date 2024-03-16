@@ -31,11 +31,11 @@ def detect_gaze(image_path, frame_number):
 
     faces = detector(gray)
 
+    is_looking_in_camera = "idk"
     for face in faces:
-        look = "idk"
         shape = predictor(gray, face)
 
-        # Calculate the center of the eyes
+        # to calculate the center of the eyes
         left_eye = np.array([shape.part(36).x, shape.part(36).y])
         right_eye = np.array([shape.part(45).x, shape.part(45).y])
         eye_center = (left_eye + right_eye) // 2
@@ -52,19 +52,25 @@ def detect_gaze(image_path, frame_number):
 
         gaze_angle_deg = np.degrees(gaze_angle_rad)
 
-        if (60 <= gaze_angle_deg < 140) or (-150 < gaze_angle_deg <= -90):
-            look = "Yes"
+        gaze_angle_deg = abs(gaze_angle_deg)
+        # cv2.putText(image, f"Angle {gaze_angle_deg}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+        if (65.5 <= gaze_angle_deg < 83):
+            is_looking_in_camera = "Yes"
             # print("Person is looking at the camera")
+        # elif (81 <= gaze_angle_deg < 95):
+        #     look = "Yes"
+        elif (110 <= gaze_angle_deg < 120):
+            is_looking_in_camera = "Yes"
         else:
-            look = "No"
+            is_looking_in_camera = "No"
             # print("Person is not looking at the camera")
     
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     # cv2.imshow("Frame", image)
 
-    print(look)
-    if look == "Yes":
-        print("The person is looking at the camera")
+    print(is_looking_in_camera)
+    if is_looking_in_camera == "Yes":
         frame_number += 1
         path = f"Frame{str(frame_number)}.jpg"
         print(path)
@@ -77,5 +83,5 @@ def detect_gaze(image_path, frame_number):
 
     return frame_number
 
-for image in os.listdir(directory):
-    frame_number = detect_gaze(image, frame_number)
+# for image in os.listdir(directory):
+#     frame_number = detect_gaze(image, frame_number)
