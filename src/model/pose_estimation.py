@@ -7,8 +7,6 @@ from PIL import Image
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('src/model/shape_predictor_68_face_landmarks.dat')
 
-
-
 directory = "public/eye_detection_output"
 directory_name = "public/is_facing_camera_output"
 
@@ -19,13 +17,15 @@ if os.path.exists(directory_name):
 else:
     os.mkdir(directory_name)
 
+frame_number = 0
+
 def detect_gaze(image_path, frame_number):
     image = Image.open(os.path.join(directory, image_path))
     image = np.array(image)
     
     if image is None:
         # print("Invalid image")
-        return 
+        return frame_number
     
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -54,22 +54,28 @@ def detect_gaze(image_path, frame_number):
 
         if (60 <= gaze_angle_deg < 140) or (-150 < gaze_angle_deg <= -90):
             look = "Yes"
-            print("Person is looking at the camera")
+            # print("Person is looking at the camera")
         else:
             look = "No"
-            print("Person is not looking at the camera")
+            # print("Person is not looking at the camera")
     
-    cv2.imshow("Frame", image)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # cv2.imshow("Frame", image)
 
+    print(look)
     if look == "Yes":
-        cv2.imwrite('Frame' + str(frame_number) + ".jpg" , image)
+        print("The person is looking at the camera")
         frame_number += 1
+        path = f"Frame{str(frame_number)}.jpg"
+        print(path)
+        write_success = cv2.imwrite(os.path.join(directory_name, path) , image)
+        if not write_success:
+            print("Could not write the image")
+
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+    return frame_number
 
 for image in os.listdir(directory):
-    # path = f"{directory}/{image}"
-    frame_number = 1
-    detect_gaze(image, frame_number)
-
+    frame_number = detect_gaze(image, frame_number)

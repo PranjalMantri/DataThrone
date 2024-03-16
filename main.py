@@ -14,10 +14,10 @@ else:
     quit()
 
 
-# frames_to_process_per_second = 1
+frames_to_process_per_second = 1
 
-# eye_detection_success = eye_detection(downloaded_video, frames_to_process_per_second)
+eye_detection_success = eye_detection(downloaded_video, frames_to_process_per_second)
 
-# if not eye_detection_success:
-#     print("Something went wrong while analysing user eyes")
+if not eye_detection_success:
+    print("Something went wrong while analysing user eyes")
 
