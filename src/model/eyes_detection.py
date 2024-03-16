@@ -93,18 +93,15 @@ def eye_detection(video_path, frames_to_process):
         # saving only those image that have open eyes
 
         if status == "Open":
-            os.chdir(directory_name)
             path = f"{str(frame_number)}.jpg"
-            print(path)
             write_success = cv2.imwrite(path, frame)
-            os.chdir("../")
-            if not write_success:
-                print(f"Failed to write image to: {path}")
             
-
         if (cv2.waitKey(30) == 27):
             break
 
     cap.release()
     cv2.destroyAllWindows()
     return True
+
+
+eye_detection("public/youtube_video/I ruined everything.mp4", frames_to_process=5)

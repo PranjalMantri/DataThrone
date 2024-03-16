@@ -2,11 +2,12 @@ import cv2
 import dlib
 import numpy as np
 import os
+from PIL import Image
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor('src/model/shape_predictor_68_face_landmarks.dat')
 
-frame_number = 1
+
 
 directory = "public/eye_detection_output"
 directory_name = "public/is_facing_camera_output"
@@ -15,13 +16,13 @@ if os.path.exists(directory_name):
     for file in os.listdir(directory_name):
         file_to_remove = os.path.join(directory_name, file)
         os.remove(file_to_remove)
-    os.rmdir(directory_name)
-
-os.mkdir(directory_name)
+else:
+    os.mkdir(directory_name)
 
 def detect_gaze(image_path, frame_number):
-    image = cv2.imread(image_path)
-
+    image = Image.open(os.path.join(directory, image_path))
+    image = np.array(image)
+    
     if image is None:
         # print("Invalid image")
         return 
@@ -58,6 +59,8 @@ def detect_gaze(image_path, frame_number):
             look = "No"
             print("Person is not looking at the camera")
     
+    cv2.imshow("Frame", image)
+
     if look == "Yes":
         cv2.imwrite('Frame' + str(frame_number) + ".jpg" , image)
         frame_number += 1
@@ -67,5 +70,6 @@ def detect_gaze(image_path, frame_number):
 
 for image in os.listdir(directory):
     # path = f"{directory}/{image}"
+    frame_number = 1
     detect_gaze(image, frame_number)
 
