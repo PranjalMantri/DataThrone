@@ -13,6 +13,7 @@ if os.path.exists(directory_name):
 
 os.mkdir(directory_name)
 
+
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("src/model/shape_predictor_68_face_landmarks.dat")
 
@@ -94,7 +95,10 @@ def eye_detection(video_path, frames_to_process):
 
         if status == "Open":
             path = f"{str(frame_number)}.jpg"
+            os.chdir(directory_name)
             write_success = cv2.imwrite(path, frame)
+            os.chdir("../../")
+            print(os.getcwd())
             
         if (cv2.waitKey(30) == 27):
             break
